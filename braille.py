@@ -27,26 +27,24 @@ COLORS = [
 
 # Converts an image file into lines of braille unicode.
 #   cutoff      dictates the contrast level for when not to render pixels
-#                   Cutoff is based on a blackbackground, so it won't render pixels darker than the value
+#                   Cutoff is based on a black background, so it won't render pixels darker than the value
 #   size        is a modifier for the overall size
 #   doColor     says if we want color escapes in our unicode
 #   renderIRC   says if we want to use IRC color escapes instead of ansi escapes
 #   invert      says if we want to invert the colors in the image
 def convert(img, doColor=True, renderIRC=True, cutoff=50, size=1.0, invert=False, alphaColor=(0, 0, 0)):
-    i = Image.open(img)
-
     WIDTH = int(90 * size)
     HEIGHT = int(40 * size)
 
     # Resize the image to fix bounds
-    s = i.size
+    s = img.size
     if s[0] == 0 or s[1] == 0 or (float(s[0]) / float(WIDTH)) == 0 or (float(s[1]) / float(HEIGHT)) == 0:
         return []
     ns = (WIDTH, int(s[1] / (float(s[0]) / float(WIDTH))))
     if ns[1] > HEIGHT:
         ns = (int(s[0] / (float(s[1]) / float(HEIGHT))), HEIGHT)
 
-    i2 = i.resize(ns)
+    i2 = img.resize(ns)
 
     bimg = []
 
@@ -55,7 +53,7 @@ def convert(img, doColor=True, renderIRC=True, cutoff=50, size=1.0, invert=False
         lastCol = -1
         for c in range(0, i2.size[0], 2):
             val = 0
-            i = 0
+            img = 0
             cavg = [0, 0, 0]
             pc = 0
 
@@ -81,10 +79,10 @@ def convert(img, doColor=True, renderIRC=True, cutoff=50, size=1.0, invert=False
                     luma = (0.2126 * float(p[0]) + 0.7152 * float(p[1]) + 0.0722 * float(p[2]))
                     pv = sum(p[:3])
                     if luma > cutoff:
-                        val += 1 << i
+                        val += 1 << img
                         cavg = map(sum, zip(cavg, p))
                         pc += 1
-                    i += 1
+                    img += 1
 
             if doColor and pc > 0:
                 # Get the average of the 8 pixels
@@ -115,7 +113,7 @@ def convert(img, doColor=True, renderIRC=True, cutoff=50, size=1.0, invert=False
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
-    ap.add_argument('file', help='The image file to render')
+    ap.add_argument('file', help='The video file to render')
     ap.add_argument('-c', type=int, default=100, help='The luma cutoff amount, from 0 to 255. Default 50')
     ap.add_argument('-s', type=float, default=1.0, help='Size modifier. Default 1.0x')
     ap.add_argument('--nocolor', action="store_true", default=False, help='Don\'t use color')
@@ -130,6 +128,17 @@ if __name__ == '__main__':
             alphaColor = c[1]
             break
 
-    for u in convert(args.file, doColor=not args.nocolor, renderIRC=args.irc, cutoff=args.c, size=args.s,
-                     invert=args.invert, alphaColor=alphaColor):
-        print(u)
+    out = open("output.txt", "a", encoding="utf-8")
+
+    video = cv2.VideoCapture(args.file)
+    success, frame = video.read()
+    while success:
+        image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+        for u in convert(image, doColor=not args.nocolor, renderIRC=args.irc, cutoff=args.c, size=args.s,
+                         invert=args.invert, alphaColor=alphaColor):
+            out.write(u+"\n")
+
+        success, frame = video.read()
+
+    out.close()

@@ -1,12 +1,14 @@
-# Image To Braille
-Covers a given image to a unicode version using braille characters and color escapses.
+# Video To Braille
+Covers a given video to a unicode version using braille characters and color escapes.
+
+made for bad apple
 
 ## Basic Example
-![Original](https://upload.wikimedia.org/wikipedia/commons/e/ee/GNU%2BLinux.png)
+![Original](https://ia902905.us.archive.org/19/items/TouhouBadApple/Touhou%20-%20Bad%20Apple.mp4)
 
-`python braille.py /tmp/it-is-GNU-SLASH-linux.png -s 4 -c 50 --background white`
+`py braille.py apple.mp4 --nocolor`
 
-![After](http://puu.sh/n4m1L/e54e4750a0.png)
+![After](https://cdn.discordapp.com/attachments/905438118746947687/979426343265644574/2022-05-26_10-49-29.mp4)
 
 ## Usage
 ```
@@ -15,7 +17,7 @@ usage: braille.py [-h] [-c C] [-s S] [--nocolor] [--irc] [--invert]
                   file
 
 positional arguments:
-  file                  The image file to render
+  file                  The video file to render
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -29,5 +31,6 @@ optional arguments:
 ```
 
 ## Requirements
-* python2
+* python3
 * [pillow](http://python-pillow.org/)
+* [opencv](https://pypi.org/project/opencv-python/)
