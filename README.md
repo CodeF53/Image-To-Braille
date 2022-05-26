@@ -1,5 +1,5 @@
 # Video To Braille
-Covers a given video to a unicode version using braille characters and color escapes.
+Converts a given video to a unicode version using braille characters and color escapes.
 
 made for bad apple
 
