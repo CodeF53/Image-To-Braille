@@ -4,7 +4,7 @@ Converts a given video to a unicode version using braille characters and color e
 made for bad apple
 
 ## Basic Example
-![Original](https://ia902905.us.archive.org/19/items/TouhouBadApple/Touhou%20-%20Bad%20Apple.mp4)
+![Original](https://archive.org/details/TouhouBadApple)
 
 `py braille.py apple.mp4 --nocolor`
 
